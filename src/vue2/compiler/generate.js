@@ -1,4 +1,4 @@
 
-export function generate(ast) {
+export default function generate(ast) {
 
 }

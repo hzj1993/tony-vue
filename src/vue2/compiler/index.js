@@ -1,8 +1,8 @@
-import {parse} from './parse.js'
-import {optimize} from './optimize.js'
-import {generate} from './generate.js'
+import parse from './parse.js'
+import optimize from './optimize.js'
+import generate from './generate.js'
 
-export function compileToFunction(template) {
+export default function compileToFunction(template) {
     if (typeof template !== 'string') {
         return;
     }

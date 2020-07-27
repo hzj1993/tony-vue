@@ -1,4 +1,4 @@
 
-export function optimize(ast) {
+export default function optimize(ast) {
 
 }

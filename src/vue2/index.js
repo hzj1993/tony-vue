@@ -1,5 +1,5 @@
 import Watcher from './reactive/watcher.js'
-import Dep from './reactive/dep.js'
+import compileToFunction from './compiler/index.js'
 import {observe} from './reactive'
 
 export default function TonyVue(options) {
@@ -11,7 +11,7 @@ TonyVue.prototype.$mount = function (el) {
     let vm = this;
     let elm = document.querySelector(el);
     new Watcher(this, function () {
-        elm.innerHTML = vm.$options.template
+        this._render = compileToFunction(vm.$options.template);
         // let template = document.createDocumentFragment(vm.$options.template);
         // elm.appendChild(template);
     })
