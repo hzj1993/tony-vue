@@ -7,24 +7,5 @@
 <body>
 <div id="app"></div>
 </body>
-<script type="module">
-  import TonyVue from './src/vue2'
-
-  let app = new TonyVue({
-    template: `
-            <div @click="change">{{a}}</div>
-        `,
-    data() {
-      return {
-        a: 1
-      }
-    },
-    methods: {
-      change() {
-        this.a++;
-      }
-    }
-  }).$mount('#app');
-
-</script>
+<script src="main.js" type="module"></script>
 </html>

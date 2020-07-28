@@ -1,5 +1,4 @@
 import parse from './parse.js'
-import optimize from './optimize.js'
 import generate from './generate.js'
 
 export default function compileToFunction(template) {
@@ -9,15 +8,20 @@ export default function compileToFunction(template) {
 
     let ast = parse(template.trim());
 
-    optimize(ast);
+    // 玩具版vue暂不实现优化
+    // optimize(ast);
 
     let code = generate(ast);
 
     return {
-        render: code.render
+        render: createFunction(code.render)
     };
 }
 
+function createFunction(code) {
+    debugger
+    return new Function(code);
+}
 
 
 
