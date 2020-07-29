@@ -11,7 +11,5 @@ let app = new TonyVue({
     return {
       a: 1
     }
-  },
-  methods: {
   }
 }).$mount('#app');
