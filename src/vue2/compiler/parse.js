@@ -15,6 +15,7 @@ function parseHTML(html) {
     let tagStartOrEnd = html.indexOf('<');
       
     if (tagStartOrEnd === 0) {
+      // 结束标签
       if (tagEndRE.test(html)) {
         const tagEndMatch = html.match(tagEndRE);
         step(tagEndMatch[0].length);
@@ -29,6 +30,7 @@ function parseHTML(html) {
         }
       }
 
+      // 开始标签
       if (tagStartRE.test(html)) {
         const tagStartMatch = html.match(tagStartRE);
         let ast = {
@@ -54,6 +56,7 @@ function parseHTML(html) {
       }
     }
 
+    // 文本内容
     if (tagStartOrEnd > 0) {
       let text = html.substring(0, tagStartOrEnd);
       step(text.length);

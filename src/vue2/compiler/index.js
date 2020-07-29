@@ -19,7 +19,6 @@ export default function compileToFunction(template) {
 }
 
 function createFunction(code) {
-    debugger
     return new Function(code);
 }
 

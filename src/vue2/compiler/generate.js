@@ -1,4 +1,6 @@
 const eventBindingRE = /^@|^v-on:/;
+const dynamicORStaicAttrRE = /(?:^:|^v-bind:)?([\w]+)/;
+const dynamicAttrRE = /^:|^v-bind:/;
 const expressionTextRE = /\{\{((?:.|\r?\n)+?)\}\}/;
 
 export default function generate(ast) {
@@ -22,11 +24,18 @@ function genData(ast) {
     if (eventBindingRE.test(attr.key)) {
       let str = `on: {${
         JSON.stringify(attr.key.replace(eventBindingRE, ''))
-      }: ${attr.value}}`;
+      }: ${attr.value}}, `;
       code += str;
+    } else if (dynamicORStaicAttrRE.test(attr.key)) {
+      let match = attr.key.match(dynamicORStaicAttrRE);
+      let attrName = match[1];
+      if (attrName === 'key') {
+        let str = `key: ${dynamicAttrRE.test(attr.key) ? `_s(${attr.value})` : JSON.stringify(attr.value)},`
+        code += str;
+      }
     }
   });
-  return code + '}';
+  return code.substring(0, code.length - 1) + '}';
 }
 
 function genChildren(ast) {

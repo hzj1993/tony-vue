@@ -1,53 +1,37 @@
-import { observe } from "./reactive";
+import { initEvent, initRender, initState } from "./helper.js";
 import patch from "./patch.js";
 import compileToFunction from "./compiler";
 import Watcher from "./reactive/watcher.js";
 
-function initEvent(vm) {
-  const {methods} = vm.$options;
-  Object.keys(methods).forEach(key => {
-    vm[key] = methods[key].bind(vm);
-  });
-}
-
-function initState(vm) {
-  const option = vm.$options;
-  let data = vm._data = option.data.apply(vm, vm);
-  observe(data);
-  Object.keys(data).forEach(key => {
-    proxy(vm, '_data', key);
-  });
-}
-
-function proxy(obj, sourceKey, key) {
-  Object.defineProperty(obj, key, {
-    get() {
-      return this[sourceKey][key];
-    },
-    set(v) {
-      this[sourceKey][key] = v;
-    }
-  });
-}
 
 export function initMixin(TonyVue) {
   TonyVue.prototype._init = function (options) {
     const vm = this;
     this.$options = options;
     initEvent(vm);
+    initRender(vm);
     initState(vm);
   }
 }
 
 export function updateMixin(TonyVue) {
   TonyVue.prototype.update = function (vnode) {
-    debugger
-    patch(oldVNode, vnode);
+    const vm = this;
+    const prevnode = vm._vnode;
+    vm._vnode = vnode;
+    if (!prevnode) {
+      // 初始化
+      vm.$el = patch(null, vnode, vm.$el);
+    } else {
+      // 更新过程
+      vm.$el = patch(prevnode, vnode, vm.$el);
+    }
   }
 
   TonyVue.prototype._render = function () {
-    const render = this.$options.render;
-    render.call(this, this);
+    const vm = this;
+    const render = vm.$options.render;
+    return render.call(vm, vm);
   }
 }
 
@@ -59,10 +43,7 @@ export function mountMixin(TonyVue) {
     this.$options.render = render;
 
     new Watcher(this, function () {
-      debugger
       this.update(this._render())
-      // let template = document.createDocumentFragment(vm.$options.template);
-      // elm.appendChild(template);
     })
   }
 }
