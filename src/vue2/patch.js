@@ -45,6 +45,7 @@ function updateChildren(parentElm, oldCh, newCh) {
   let newEndVnode = newCh[newEndIdx];
   let oldStartVnode = oldCh[oldStartIdx];
   let oldEndVnode = oldCh[oldEndIdx];
+  let oldKeyToIdx, newIdxInOld;
 
   while (newStartIdx <= newEndIdx && oldStartIdx <= oldEndIdx) {
     if (!newStartVnode) {
@@ -75,10 +76,68 @@ function updateChildren(parentElm, oldCh, newCh) {
       newEndVnode = newCh[newEndIdx--];
     } else {
       // 以上均不满足
-
+      if (!oldKeyToIdx) oldKeyToIdx = createOldKeyToIdx(oldCh, oldStartIdx, oldEndIdx);
+      newIdxInOld = newStartVnode.key
+          ? oldKeyToIdx[newStartVnode.key]
+          : findIdxInOld(newStartVnode, oldCh, oldStartIdx, oldEndIdx);
+      if (isUndef(newIdxInOld)) {
+        createElm(newStartVnode, parentElm);
+      } else {
+        let vnodeToOld = oldCh[newIdxInOld];
+        if (sameVNode(vnodeToOld, newStartVnode)) {
+          patchVnode(vnodeToOld, newStartVnode);
+          parentElm.insertBefore(vnodeToOld.elm, oldStartVnode);
+          oldCh[newIdxInOld] = undefined;
+        } else {
+          createElm(newStartVnode, parentElm);
+        }
+        newStartVnode = newCh[newStartIdx++];
+      }
     }
   }
+  if (oldEndIdx >= oldStartIdx) {
+    // 还有剩下的旧节点，全部删除
+    removeVnodes(oldCh, oldStartIdx, oldEndIdx);
+  } else if (newEndIdx >= newStartIdx) {
+    // 还有剩下的新节点，全部新增
+  }
+}
 
+function removeVnodes(children, startIdx, endIdx) {
+  for (let i = startIdx; i <= endIdx; i++) {
+    let vnode = children[i];
+    if (vnode.tagName) {
+      debugger
+      removeVnode(vnode);
+    } else {
+      removeVnode(vnode);
+    }
+  }
+}
+
+function removeVnode(vnode) {
+  let parentNode = vnode.elm.parentNode;
+  parentNode.removeChild(vnode.elm);
+}
+
+function isUndef(a) {
+  return a === void 0 || a === null;
+}
+
+function findIdxInOld(vnode, children, startIdx, endIdx) {
+  for (let i = startIdx; i <= endIdx; i++) {
+    if (!isUndef(children[i]) && sameVNode(vnode, children[i])) return i;
+  }
+}
+
+function createOldKeyToIdx(children, startIdx, endIdx) {
+  let map = {};
+  for (let i = startIdx; i <= endIdx; i++) {
+    if (typeof children[i].key !== "undefined" && children[i].key !== null) {
+      map[children[i].key] = i;
+    }
+  }
+  return map;
 }
 
 function sameVNode(vnode1, vnode2) {
@@ -114,9 +173,7 @@ function initElmData(vnode) {
   Object.keys(data).forEach(key => {
     if (key === 'on') {
       Object.keys(data[key]).forEach(eventName => {
-        if (eventName === 'click') {
           vnode.elm.addEventListener(eventName, data[key][eventName].bind(vnode.context))
-        }
       });
     }
   });

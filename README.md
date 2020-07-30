@@ -4,9 +4,20 @@
 
 ### Vue 2
 
+- [ ] 指令
+    - [x] @click
+    - [x] v-on:click
+    - [ ] v-model
+    - [ ] v-for
+    - [ ] v-else
+    - [ ] v-else-if
+    - [ ] v-show
+    - [x] v-bind
+    - [x] :xxx
 - [x] {{ }}语法
-- [x] @click="xxx"
-- [x] v-on:click="xxx"
-- [x] data响应式
-- [x] 绑定key值
-- [ ] v-model
+- [x] 响应式
+    - [x] Dep
+    - [x] Watcher
+- [x] 组件更新
+    - [x] 双端比较法
+    - [x] vnode

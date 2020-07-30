@@ -8,9 +8,11 @@ export function installRenderHelpers (target) {
 
 export function initEvent(vm) {
   const {methods} = vm.$options;
-  Object.keys(methods).forEach(key => {
-    vm[key] = methods[key].bind(vm);
-  });
+  if (methods && typeof methods === 'object') {
+    Object.keys(methods).forEach(key => {
+      vm[key] = methods[key].bind(vm);
+    });
+  }
 }
 
 export function initRender(vm) {
@@ -19,7 +21,7 @@ export function initRender(vm) {
 
 export function initState(vm) {
   const option = vm.$options;
-  let data = vm._data = option.data.apply(vm, vm);
+  let data = vm._data = option.data ? option.data.apply(vm, vm) : {};
   observe(data);
   Object.keys(data).forEach(key => {
     proxy(vm, '_data', key);
