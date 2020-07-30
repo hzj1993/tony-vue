@@ -21,6 +21,7 @@ export function defineReactive(target, key, val) {
       return val;
     },
     set(v) {
+      debugger
       if (val !== v) {
         val = v;
         dep.notify();

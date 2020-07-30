@@ -5,6 +5,7 @@ import {
 } from './create-element.js'
 
 export default function patch(oldVNode, vnode, mountEl) {
+  debugger
   if (!oldVNode) {
     // 初始化挂载
     createElm(vnode, mountEl);
@@ -13,11 +14,15 @@ export default function patch(oldVNode, vnode, mountEl) {
     patchVnode(oldVNode, vnode);
   } else {
     // 两个vnode不同，创建新的，删除旧的
+    let parentElm = mountEl.parentNode;
+    createElm(vnode, parentElm);
+    removeVnode(oldVNode);
   }
   return vnode.elm;
 }
 
 function patchVnode(oldVNode, vnode) {
+  debugger
   let elm = vnode.elm = oldVNode.elm;
   let oldCh = oldVNode.children;
   let ch = vnode.children;
@@ -78,8 +83,8 @@ function updateChildren(parentElm, oldCh, newCh) {
       // 以上均不满足
       if (!oldKeyToIdx) oldKeyToIdx = createOldKeyToIdx(oldCh, oldStartIdx, oldEndIdx);
       newIdxInOld = newStartVnode.key
-          ? oldKeyToIdx[newStartVnode.key]
-          : findIdxInOld(newStartVnode, oldCh, oldStartIdx, oldEndIdx);
+        ? oldKeyToIdx[newStartVnode.key]
+        : findIdxInOld(newStartVnode, oldCh, oldStartIdx, oldEndIdx);
       if (isUndef(newIdxInOld)) {
         createElm(newStartVnode, parentElm);
       } else {
@@ -100,6 +105,14 @@ function updateChildren(parentElm, oldCh, newCh) {
     removeVnodes(oldCh, oldStartIdx, oldEndIdx);
   } else if (newEndIdx >= newStartIdx) {
     // 还有剩下的新节点，全部新增
+    let refElm = newCh[newEndIdx + 1] ? newCh[newEndIdx + 1].elm : null;
+    addVnodes(newCh, newStartIdx, newEndIdx, parentElm, refElm);
+  }
+}
+
+function addVnodes(children, startIdx, endIdx, parentElm, refElm) {
+  for (let i = startIdx; startIdx <= endIdx; i++) {
+    createElm(children[i], parentElm);
   }
 }
 
@@ -107,12 +120,26 @@ function removeVnodes(children, startIdx, endIdx) {
   for (let i = startIdx; i <= endIdx; i++) {
     let vnode = children[i];
     if (vnode.tagName) {
-      debugger
+      removeVnodeListener(vnode);
       removeVnode(vnode);
     } else {
       removeVnode(vnode);
     }
   }
+}
+
+function removeVnodeListener(vnode) {
+  const data = vnode.data;
+  if (typeof data !== 'object' || data === null) {
+    return;
+  }
+  Object.keys(data).forEach(key => {
+    if (key === 'on') {
+      Object.keys(data[key]).forEach(eventName => {
+        vnode.elm.removeEventListener(eventName, data[key][eventName].bind(vnode.context))
+      });
+    }
+  });
 }
 
 function removeVnode(vnode) {
@@ -170,11 +197,23 @@ function createChildren(vnode, children) {
 
 function initElmData(vnode) {
   const data = vnode.data;
+  if (typeof data !== 'object' || data === null) {
+    return;
+  }
+  addElmAttribute(data.attrs, vnode);
+  addElmListeners(data.on, vnode);
+}
+
+function addElmAttribute(data, vnode) {
+  if (isUndef(data) || typeof data !== 'object') return;
   Object.keys(data).forEach(key => {
-    if (key === 'on') {
-      Object.keys(data[key]).forEach(eventName => {
-          vnode.elm.addEventListener(eventName, data[key][eventName].bind(vnode.context))
-      });
-    }
+    vnode.elm.setAttribute(key, data[key]);
+  });
+}
+
+function addElmListeners(data, vnode) {
+  if (isUndef(data) || typeof data !== 'object') return;
+  Object.keys(data).forEach(eventName => {
+    vnode.elm.addEventListener(eventName, data[eventName].bind(vnode.context));
   });
 }

@@ -6,7 +6,7 @@ const HTML5_ELEMENT = [
     'textarea', 'header', 'section', 'footer', 'h1',
     'h2', 'h3', 'h4', 'h5'
 ];
-
+let uid = 1;
 class VNode {
     constructor(options) {
         this.type = options.type;
@@ -16,7 +16,7 @@ class VNode {
         this.data = options.data;
         this.text = options.text;
         this.elm = options.elm;
-        this.key = options.key;
+        this.key = options.key || `@@__vnode_id_${uid++}`;
         this.context = options.context;
     }
 }

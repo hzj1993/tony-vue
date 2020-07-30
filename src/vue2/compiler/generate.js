@@ -13,27 +13,28 @@ export default function generate(ast) {
 function genElement(ast) {
     let data = genData(ast);
     let children = genChildren(ast);
-    return `_c('${
-        ast.tagName || 'div'
-    }'${
-        ast.attrs.length ? ',' + data : ''
-    }${
-        ast.children.length ? ',' + children : ''
-    })`;
+    return `_c('${ast.tagName || 'div'}',${data},${children})`;
 }
 
 function genData(ast) {
     let code = '';
     let methods = [];
     let attrs = [];
+
     ast.attrs.forEach(attr => {
         if (eventBindingRE.test(attr.key)) {
             methods.push(attr);
         } else if (dynamicORStaicAttrRE.test(attr.key)) {
             if (attr.key === 'v-model') {
-                debugger
                 if (ast.tagName === 'input') {
-
+                    methods.push({
+                        key: 'input',
+                        value: `function($event){${attr.value}=$event.target.value;}`
+                    });
+                    attrs.push({
+                        key: ':value',
+                        value: attr.value
+                    });
                 }
             } else {
                 attrs.push(attr);
@@ -48,7 +49,6 @@ function genData(ast) {
     }},` : '';
     code += methodsCode;
 
-    debugger
     let attrCode = attrs.length ? `attrs: {${
         attrs.map(attr => {
             let match = attr.key.match(dynamicORStaicAttrRE);
@@ -56,7 +56,6 @@ function genData(ast) {
         }).join(',')
     }},` : '';
     code += attrCode;
-    debugger
 
     return `{${code ? code.substring(0, code.length - 1) : ''}}`;
 }
