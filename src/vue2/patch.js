@@ -5,7 +5,6 @@ import {
 } from './create-element.js'
 
 export default function patch(oldVNode, vnode, mountEl) {
-  debugger
   if (!oldVNode) {
     // 初始化挂载
     createElm(vnode, mountEl);
@@ -22,7 +21,6 @@ export default function patch(oldVNode, vnode, mountEl) {
 }
 
 function patchVnode(oldVNode, vnode) {
-  debugger
   let elm = vnode.elm = oldVNode.elm;
   let oldCh = oldVNode.children;
   let ch = vnode.children;
@@ -31,6 +29,10 @@ function patchVnode(oldVNode, vnode) {
     if (oldVNode.text !== vnode.text) {
       elm.textContent = vnode.text;
     }
+  } else if (oldVNode.type === TEXT_VNODE || vnode.type === TEXT_VNODE) {
+    let parentElm = elm.parentNode;
+    createElm(vnode, parentElm);
+    removeVnode(oldVNode);
   } else if (oldVNode.type !== TEXT_VNODE && vnode.type !== TEXT_VNODE) {
     if (oldCh && ch) {
       if (oldCh !== ch) {
@@ -53,34 +55,39 @@ function updateChildren(parentElm, oldCh, newCh) {
   let oldKeyToIdx, newIdxInOld;
 
   while (newStartIdx <= newEndIdx && oldStartIdx <= oldEndIdx) {
-    if (!newStartVnode) {
-      newStartVnode = newCh[newStartIdx++];
+    if (!oldEndVnode) {
+      oldEndVnode = oldCh[--oldEndIdx];
     } else if (!oldStartVnode) {
-      oldStartVnode = oldCh[oldStartIdx++];
+      oldStartVnode = oldCh[++oldStartIdx];
     } else if (sameVNode(oldStartVnode, newStartVnode)) {
       // 头头
       patchVnode(oldStartVnode, newStartVnode);
-      newStartVnode = newCh[newStartIdx++];
-      oldStartVnode = oldCh[oldStartIdx++];
+      newStartVnode = newCh[++newStartIdx];
+      oldStartVnode = oldCh[++oldStartIdx];
     } else if (sameVNode(oldEndVnode, newEndVnode)) {
       // 尾尾
       patchVnode(oldEndVnode, newEndVnode);
-      newEndVnode = newCh[newEndIdx--];
-      oldEndVnode = oldCh[oldEndIdx--];
+      newEndVnode = newCh[--newEndIdx];
+      oldEndVnode = oldCh[--oldEndIdx];
     } else if (sameVNode(oldEndVnode, newStartVnode)) {
       // 头尾
       patchVnode(oldEndVnode, newStartVnode);
       parentElm.insertBefore(oldEndVnode.elm, oldCh[oldStartIdx]);
-      newStartVnode = newCh[newStartIdx++];
-      oldEndVnode = oldCh[oldEndIdx--];
+      newStartVnode = newCh[++newStartIdx];
+      oldEndVnode = oldCh[--oldEndIdx];
     } else if (sameVNode(oldStartVnode, newEndVnode)) {
       // 尾头
       patchVnode(oldStartVnode, newEndVnode);
       parentElm.insertBefore(oldStartVnode.elm, oldEndVnode.elm.nextSibling);
-      oldStartVnode = oldCh[oldStartIdx++];
-      newEndVnode = newCh[newEndIdx--];
+      oldStartVnode = oldCh[++oldStartIdx];
+      newEndVnode = newCh[--newEndIdx];
     } else {
       // 以上均不满足
+      // 找到新节点在旧节点中的下标：
+      // 若存在，且符合sameVnode，进行patchVnode，旧节点置为undefined
+      //        不符合sameVnode，创建新节点
+      // 若不存在，创建新节点
+      // newStartIdx++
       if (!oldKeyToIdx) oldKeyToIdx = createOldKeyToIdx(oldCh, oldStartIdx, oldEndIdx);
       newIdxInOld = newStartVnode.key
         ? oldKeyToIdx[newStartVnode.key]
@@ -96,7 +103,7 @@ function updateChildren(parentElm, oldCh, newCh) {
         } else {
           createElm(newStartVnode, parentElm);
         }
-        newStartVnode = newCh[newStartIdx++];
+        newStartVnode = newCh[++newStartIdx];
       }
     }
   }

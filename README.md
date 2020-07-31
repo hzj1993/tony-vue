@@ -5,9 +5,8 @@
 ### Vue 2
 
 - [ ] 指令
-    - [x] @click
-    - [x] v-on:click
-    - [ ] v-model
+    - [x] @/v-on（仅支持原生事件）
+    - [x] v-model
     - [ ] v-for
     - [ ] v-else
     - [ ] v-else-if

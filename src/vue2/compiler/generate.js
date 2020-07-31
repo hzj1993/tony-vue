@@ -13,7 +13,7 @@ export default function generate(ast) {
 function genElement(ast) {
     let data = genData(ast);
     let children = genChildren(ast);
-    return `_c('${ast.tagName || 'div'}',${data},${children})`;
+    return `_c('${ast.tagName || 'div'}',${data}${children ? ',' + children : ''})`;
 }
 
 function genData(ast) {
@@ -62,7 +62,7 @@ function genData(ast) {
 
 function genChildren(ast) {
     let code = '';
-    if (!ast.children.length) return '[]';
+    if (!ast.children.length) return '';
     ast.children.forEach(child => {
         // 只支持{{}}内只使用单变量,如 {{ a }}、{{b}}
         if (child.type === 'text') {

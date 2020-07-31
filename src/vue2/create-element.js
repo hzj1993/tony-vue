@@ -16,7 +16,7 @@ class VNode {
         this.data = options.data;
         this.text = options.text;
         this.elm = options.elm;
-        this.key = options.key || `@@__vnode_id_${uid++}`;
+        this.key = options.key/* || `@@__vnode_id_${uid++}`*/;
         this.context = options.context;
     }
 }

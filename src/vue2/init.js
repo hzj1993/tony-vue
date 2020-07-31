@@ -18,7 +18,6 @@ export function updateMixin(TonyVue) {
   TonyVue.prototype.update = function (vnode) {
     const vm = this;
     const prevnode = vm._vnode;
-    debugger
     vm._vnode = vnode;
     if (!prevnode) {
       // 初始化
