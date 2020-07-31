@@ -40,3 +40,7 @@ export function createTextVNode(text) {
         text
     })
 }
+
+export function createEmptyVNode() {
+    return createTextVNode('');
+}

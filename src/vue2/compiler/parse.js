@@ -1,8 +1,8 @@
 const tagStartRE = /^<([\w]+)/;
 const tagEndRE = /^<\/([\w]+)>/;
 const tagCloseRE = /^\s*(\/?)>/;
-const dynamicAttributeRE = /^\s*((?:v-[\w]+:|@|:|v-)[\w]+)="([\w]+)"/;
-const attributeRE = /^\s*([\w]+)="([\w]+)"/;
+const dynamicAttributeRE = /^\s*((?:v-[\w]+:|@|:|v-)[\w]+)=(?:"([^"]*)"|'([^']*)')/;
+const attributeRE = /^\s*([\w]+)=(?:"([^"]*)"|'([^']*)')/;
 const unaryTag = ['area', 'base', 'br', 'col', 'embed', 'frame', 'hr', 'img', 'input', 'isindex', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
 
 export default function parse(template) {

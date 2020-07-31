@@ -13,14 +13,17 @@ export default function generate(ast) {
 function genElement(ast) {
     let data = genData(ast);
     let children = genChildren(ast);
-    return `_c('${ast.tagName || 'div'}',${data}${children ? ',' + children : ''})`;
+    let code = `_c('${ast.tagName || 'div'}',${data}${children ? ',' + children : ''})`;
+    if (ast['v-if']) {
+        code = `(${ast['v-if']}) ? ${code} : _e()`;
+    }
+    return code;
 }
 
 function genData(ast) {
     let code = '';
     let methods = [];
     let attrs = [];
-
     ast.attrs.forEach(attr => {
         if (eventBindingRE.test(attr.key)) {
             methods.push(attr);
@@ -36,6 +39,8 @@ function genData(ast) {
                         value: attr.value
                     });
                 }
+            } else if (attr.key === 'v-if') {
+                ast['v-if'] = attr.value;
             } else {
                 attrs.push(attr);
             }

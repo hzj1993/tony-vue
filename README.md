@@ -7,9 +7,7 @@
 - [ ] 指令
     - [x] @/v-on（仅支持原生事件）
     - [x] v-model
-    - [ ] v-for
-    - [ ] v-else
-    - [ ] v-else-if
+    - [x] v-if
     - [ ] v-show
     - [x] v-bind
     - [x] :xxx
