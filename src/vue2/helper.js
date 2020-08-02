@@ -39,3 +39,16 @@ export function proxy(obj, sourceKey, key) {
     }
   });
 }
+
+function cached (fn) {
+  var cache = Object.create(null);
+  return (function cachedFn (str) {
+    var hit = cache[str];
+    return hit || (cache[str] = fn(str))
+  })
+}
+
+var camelizeRE = /-(\w)/g;
+export var camelize = cached(function (str) {
+  return str.replace(camelizeRE, function (_, c) { return c ? c.toUpperCase() : ''; })
+});
