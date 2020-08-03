@@ -227,35 +227,34 @@ function createChildren(vnode, children) {
 }
 
 function updateDOMListeners(vnode, oldVnode) {
-  debugger
   const data = vnode.data;
+  const oldOn = oldVnode && oldVnode.data ? oldVnode.data.on : null;
   if (typeof data !== 'object' || data === null) {
     return;
   }
-  if (!oldVnode) {
-    addElmListeners(data.on, vnode);
-  }
+  addElmListeners(data.on, vnode, oldOn);
+}
+
+function addElmListeners(on, vnode, oldOn) {
+  if (isUndef(on) || typeof on !== 'object') return;
+  Object.keys(on).forEach(eventName => {
+    if(!oldOn || !oldOn[eventName]) {
+      vnode.elm.addEventListener(eventName, on[eventName].bind(vnode.context));
+    }
+  });
 }
 
 function updateAttributes(vnode) {
-  const {attrs} = vnode.data
+  const { attrs } = vnode.data
   if (isUndef(attrs) || typeof attrs !== 'object') return;
   Object.keys(attrs).forEach(key => {
     vnode.elm.setAttribute(key, attrs[key]);
   });
 }
 
-function addElmListeners(data, vnode) {
-  if (isUndef(data) || typeof data !== 'object') return;
-  Object.keys(data).forEach(eventName => {
-    vnode.elm.addEventListener(eventName, data[eventName].bind(vnode.context));
-  });
-}
-
 function updateStaticStyle(vnode) {
   const { staticStyle } = vnode.data;
   if (staticStyle && typeof staticStyle === 'object') {
-    debugger
     Object.keys(staticStyle).forEach(name => {
       vnode.elm.style[camelize(name)] = staticStyle[name];
     });

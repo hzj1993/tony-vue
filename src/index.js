@@ -4,19 +4,21 @@ let app = new TonyVue({
   template: `
         <div>
             <div @click="change">Click</div>
-            <div v-show="a">hhhhhhj</div>
+            <div v-show="a[0]">hhhhhhj</div>
+            <input type="text" v-model="b">
+            <div>{{b}}</div>
         </div>    
         `,
   data() {
     return {
-      a: false
+      a: [true],
+      b: ''
     }
   },
   methods: {
-    change ($event) {
-      debugger
+    change () {
       console.log('change');
-      this.a = !this.a;
+      this.a[0] = !this.a[0];
     }
   }
 }).$mount('#app');

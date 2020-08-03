@@ -12,4 +12,5 @@ function flushSchedulerQueue () {
     queue.forEach(watcher => {
         watcher.get();
     });
+    queue = [];
 }

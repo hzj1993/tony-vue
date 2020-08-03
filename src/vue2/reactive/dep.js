@@ -10,7 +10,9 @@ export default class Dep {
         }
     }
     addSub() {
-        this.subs.push(Dep.target);
+        if (this.subs.indexOf(Dep.target) === -1) {
+            this.subs.push(Dep.target);
+        }
     }
     notify() {
         this.subs.forEach(sub => {
