@@ -8,6 +8,7 @@ import { camelize } from './helper.js'
 
 const cbs = [
   updateStaticStyle,
+  updateAttributes,
   updateDOMListeners
 ];
 
@@ -33,7 +34,7 @@ function patchVnode(oldVNode, vnode) {
   let ch = vnode.children;
   if (vnode.tag && vnode.data) {
     cbs.forEach(cb => {
-      cb(vnode);
+      cb(vnode, oldVNode);
     });
   }
   if (oldVNode.type === TEXT_VNODE && vnode.type === TEXT_VNODE) {
@@ -225,19 +226,22 @@ function createChildren(vnode, children) {
   }
 }
 
-function updateDOMListeners(vnode) {
+function updateDOMListeners(vnode, oldVnode) {
+  debugger
   const data = vnode.data;
   if (typeof data !== 'object' || data === null) {
     return;
   }
-  addElmAttribute(data.attrs, vnode);
-  addElmListeners(data.on, vnode);
+  if (!oldVnode) {
+    addElmListeners(data.on, vnode);
+  }
 }
 
-function addElmAttribute(data, vnode) {
-  if (isUndef(data) || typeof data !== 'object') return;
-  Object.keys(data).forEach(key => {
-    vnode.elm.setAttribute(key, data[key]);
+function updateAttributes(vnode) {
+  const {attrs} = vnode.data
+  if (isUndef(attrs) || typeof attrs !== 'object') return;
+  Object.keys(attrs).forEach(key => {
+    vnode.elm.setAttribute(key, attrs[key]);
   });
 }
 
