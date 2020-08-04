@@ -5,7 +5,7 @@ const targetMap = new WeakMap();
 // 副作用
 export function effect(fn, options) {
     const effect = createReactiveEffect(fn, options);
-    if (!options.lazy) {
+    if (!options||!options.lazy) {
         effect();
     }
     return effect;
@@ -25,7 +25,7 @@ function createReactiveEffect(fn, options) {
         }
     };
     effect.deps = [];
-    effect.options = options;
+    effect.options = options||{};
     effect._isEffect = true;
 
     return effect;
@@ -33,6 +33,7 @@ function createReactiveEffect(fn, options) {
 
 // 收集依赖
 export function track(target, key) {
+    if(!activeEffect) return;
     let depsMap = targetMap.get(target);
     if (!depsMap) {
         targetMap.set(target, (depsMap = new Map()));
@@ -50,17 +51,10 @@ export function track(target, key) {
 // 派发更新
 export function trigger(target, key) {
     let depsMap = targetMap.get(target);
-    let effects = new Set();
 
-    const add = effectsToAdd => {
-        effectsToAdd.forEach(effect => {
-            effects.add(effect);
-        });
-    };
+    if (!depsMap) return;
 
-    if (key !== void 0) {
-        add(depsMap.get(key));
-    }
+    let effects = depsMap.get(key);
 
     const run = effect => {
         if (effect.options.scheduler) {

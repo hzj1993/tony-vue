@@ -1,4 +1,4 @@
-export {ref} from './ref'
-export {reactive} from './reactive'
-export {effect, track, trigger} from './effect'
-export {computed} from './computed'
+export {ref} from './ref.js'
+export {reactive} from './reactive.js'
+export {effect, track, trigger} from './effect.js'
+export {computed} from './computed.js'

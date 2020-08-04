@@ -1,6 +1,6 @@
-import {hasChanged, isObject} from './util'
-import {reactive} from './reactive'
-import {track, trigger} from './effect'
+import {hasChanged, isObject} from './util.js'
+import {reactive} from './reactive.js'
+import {track, trigger} from './effect.js'
 
 function isRef(value) {
     return value && value.__v_isRef;
@@ -18,13 +18,13 @@ export function ref(value) {
     const r = {
         __v_isRef: true,
         get value() {
-            track();
+            track(r, 'value');
             return _value;
         },
         set value(newVal) {
             if (hasChanged(newVal, _value)) {
                 _value = covert(newVal);
-                trigger();
+                trigger(r, 'value');
             }
         }
     };

@@ -26,7 +26,7 @@
 - [ ] reactivity
     - [x] ref
     - [ ] reactive
-    - [ ] effect
+    - [x] effect
     - [ ] computed
-    - [ ] track
-    - [ ] trigger
+    - [x] track
+    - [x] trigger
