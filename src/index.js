@@ -22,16 +22,15 @@
 //     }
 //   }
 // }).$mount('#app');
-import { ref, effect, computed } from './vue3/reactivity/index.js'
+import { reactive, effect } from './vue3/reactivity/index.js'
 
-var state = ref(0);
-
-var double = computed(() => {
-  return state.value * 2;
+var state = reactive({
+  a: 1
+});
+effect(() => {
+  console.log(state.a)
 })
-
-state.value++
-console.log(double.value)
+state.a++
 
 document.getElementById('app').addEventListener('click', function () {
   state.value++
