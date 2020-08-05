@@ -23,10 +23,10 @@
     
 ### Vue 3
 
-- [ ] reactivity
+- [x] reactivity
     - [x] ref
-    - [ ] reactive
+    - [x] reactive
     - [x] effect
-    - [ ] computed
+    - [x] computed
     - [x] track
     - [x] trigger

@@ -25,14 +25,15 @@
 import { reactive, effect } from './vue3/reactivity/index.js'
 
 var state = reactive({
-  a: 1
+  a: {
+    b: 1
+  }
 });
 effect(() => {
-  console.log(state.a)
+  console.log(state.a.b)
 })
-state.a++
+state.a.b++
 
-document.getElementById('app').addEventListener('click', function () {
-  state.value++
-  console.log(double.value);
-})
+// setInterval(() => {
+//   state.a.b++
+// }, 1000);
