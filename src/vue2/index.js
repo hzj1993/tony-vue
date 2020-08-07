@@ -1,5 +1,5 @@
-import {initMixin, updateMixin, mountMixin} from './init.js'
-import {installRenderHelpers} from './helper.js'
+import {initMixin, updateMixin, mountMixin} from './runtime/init.js'
+import {installRenderHelpers} from './runtime/helper.js'
 
 function TonyVue(options) {
     this._init(options);

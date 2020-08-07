@@ -1,5 +1,5 @@
 import Dep from "./dep.js";
-import queueWatcher from "../queue.js";
+import queueWatcher from "../runtime/queue.js";
 
 let uid = 0;
 export default class Watcher {

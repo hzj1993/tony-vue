@@ -1,5 +1,5 @@
 import { createTextVNode, createVNode, createEmptyVNode } from "./create-element.js";
-import {observe} from "./reactive";
+import {observe} from "../reactive";
 
 export function installRenderHelpers (target) {
   target._v = (data) => createTextVNode(data);

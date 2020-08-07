@@ -1,7 +1,7 @@
 import { initEvent, initRender, initState } from "./helper.js";
 import patch from "./patch.js";
-import compileToFunction from "./compiler";
-import Watcher from "./reactive/watcher.js";
+import compileToFunction from "../compiler/index.js";
+import Watcher from "../reactive/watcher.js";
 
 
 export function initMixin(TonyVue) {
